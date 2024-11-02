@@ -6,7 +6,7 @@
 #    By: lfaria-m <lfaria-m@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 18:17:13 by lfaria-m          #+#    #+#              #
-#    Updated: 2024/11/01 19:15:56 by lfaria-m         ###   ########.fr        #
+#    Updated: 2024/11/02 10:58:46 by lfaria-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ OBJS = $(SRCS:.c=.o)
 # Compiler and flags
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-MLX_DIR = minilibx
+MLX_DIR = includes/minilibx
 
 MLX = $(MLX_DIR)/libmlx.a
 
@@ -31,7 +31,7 @@ AR = ar rcs
 RM = rm -f 
 
 # Library flags (adjust for Linux if needed)
-MLX_FLAGS = -L includes/$(MLX_DIR) -lmlx -framework OpenGL -framework AppKit
+MLX_FLAGS = -L $(MLX_DIR) -lmlx -framework OpenGL -framework AppKit
 
 # Rule to build the executable
 all: $(NAME)
@@ -42,12 +42,11 @@ $(NAME): $(OBJS)
 
 # Compile source files into object files
 %.o: %.c 
-	$(CC) $(CFLAGS) -I includes/$(MLX_DIR) -c $< -o $@
+	$(CC) $(CFLAGS) -I $(MLX_DIR) -c $< -o $@
 
 # Build MinilibX if not already built
 $(MLX):
-	make -C includes/$(MLX_DIR)
-
+	make -C $(MLX_DIR)
 
 
 # Clean object files
