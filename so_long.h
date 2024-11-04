@@ -29,6 +29,8 @@ typedef struct t_map
 	int		pos_y;
 	int		width;
 	int		height;
+	map_elem	wall;
+	map_elem	free_space;
 	int		collectibles;
 
 }			t_map;
@@ -55,6 +57,7 @@ typedef struct mlx_data
 	mlx_img	img;
 	entity	player;
 	mlx_img	bg_img;
+	t_map	map;
 	
 }			mlx_data;
 
@@ -63,6 +66,7 @@ typedef struct mlx_data
 
 
 #include "includes/minilibx/mlx.h"
+#include "includes/libft/libft.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -70,6 +74,9 @@ typedef struct mlx_data
 #include <stdio.h>
 #include <math.h>
 
-
+int		handle_input(int keysym, mlx_data *data);
+void 	kill_game_free(void *mlx, void *mlx_win);
+char	**map_init();
+void	render_map(char	**map, int row, int col, mlx_data *game);
 
 #endif

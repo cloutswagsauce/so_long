@@ -7,33 +7,11 @@ void kill_game_free(void *mlx, void *mlx_win)
 }
 
 
-int handle_input(int keysym, mlx_data *data)
-{
-	printf("The key %d was pressed\n", keysym);
-	if (keysym == 53) // Replace 53 with KEY_ESC constant if you defined it
-	{
-		printf("Esc pressed\n");
-		kill_game_free(data->mlx, data->window);
-		exit(0); // Exit cleanly with 0
-	}
-	else if (keysym == 13) // move w
-		data ->player.pos_y -= 10;
-	else if (keysym == 0) // move a
-		data ->player.pos_x -= 10;
-	else if (keysym == 1) // move down
-		data->player.pos_y += 10;
-	else if (keysym == 2)
-		data->player.pos_x += 10;
-	mlx_clear_window(data ->mlx, data-> window);
-	mlx_put_image_to_window(data ->mlx, data -> window, data -> bg_img.img, data -> bg_img.pos_x, data -> bg_img.pos_y);
-	mlx_put_image_to_window(data ->mlx, data -> window, data -> player.img, data -> player.pos_x, data -> player.pos_y);
-	return (0);
-}
-
-
 int main(void)
 {
 	mlx_data	game;
+
+	
 	
 	
 	game.mlx = mlx_init();
@@ -53,9 +31,13 @@ int main(void)
 		printf("Failed to load background image\n");
 		return (1);
 	}
+	mlx_xpm_file_to_image(game.mlx, "graphics/map/wall.xpm", &game.map.wall.width, &game.map.wall.height);
+	mlx_xpm_file_to_image(game.mlx, "graphics/map/free.xpm", &game.map.free_space.width, &game.map.free_space.height);
 	
 	game.player.pos_x = 0;
 	game.player.pos_y = 0;
+	game.player.width = 5;
+	game.player.height = 5;
 	game.player.img = mlx_xpm_file_to_image(game.mlx, "graphics/tile001.xpm", &game.player.width, &game.player.height);
 
 	if (!game.player.img)
@@ -68,11 +50,14 @@ int main(void)
 	mlx_put_image_to_window(game.mlx, game.window, game.bg_img.img, game.bg_img.pos_y, game.bg_img.pos_y);
 	mlx_put_image_to_window(game.mlx, game.window, game.player.img, game.player.pos_x, game.player.pos_y);
 	mlx_hook(game.window, 2, 0L, handle_input, &game);
+	map_init(&game);
+	
 
 	// Start the event loop
 	mlx_loop(game.mlx);
 
 	// Clean up (this won't actually be reached as long as mlx_loop is running)
 	kill_game_free(game.mlx, game.window);
+
 	return (0);
 }
