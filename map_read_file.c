@@ -7,6 +7,7 @@ int	count_line(int fd)
 	count = 0;
 	while (get_next_line(fd))
 		count++;
+	close(fd);
 	return (count);
 }
 char	**map_init(mlx_data	*game)
@@ -33,10 +34,15 @@ char	**map_init(mlx_data	*game)
 		if (!col)
 			col = ft_strlen(line);
 		map[row] = malloc(col + 1);
-		map[row][col] = '\0';
+		if (!map[row]) {
+            free(line);
+            break;
+        }
+		ft_strlcpy(map[row], line, col + 1);
 		free(line);
 		row++;
 	}
+	map[row] = 0;
 	close(fd);
 	render_map(map, row, col, game);
 
