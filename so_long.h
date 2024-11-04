@@ -9,7 +9,29 @@ typedef struct mlx_img
 	int		bits_per_pixel;
 	int		line_len;
 	int		endian;
+	int		width;
+	int		height;
+	int		pos_x;
+	int		pos_y;
 }			mlx_img;
+
+typedef struct map_elem
+{
+	void	*img;
+	int		width;
+	int		height;
+}			map_elem;
+
+typedef struct t_map
+{
+	char	**map;
+	int		pos_x;
+	int		pos_y;
+	int		width;
+	int		height;
+	int		collectibles;
+
+}			t_map;
 
 typedef struct entity
 {
@@ -32,6 +54,7 @@ typedef struct mlx_data
 	void	*window;
 	mlx_img	img;
 	entity	player;
+	mlx_img	bg_img;
 	
 }			mlx_data;
 
