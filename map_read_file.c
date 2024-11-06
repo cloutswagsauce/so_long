@@ -3,49 +3,53 @@
 int	count_line(int fd)
 {
 	int	count;
+	char	*line;
 
 	count = 0;
-	while (get_next_line(fd))
+	while ((line = get_next_line(fd)))
+	{
 		count++;
+		free(line);
+	}
+		
 	close(fd);
 	return (count);
 }
 char	**map_init(mlx_data	*game)
 {
-	char	**map;
 	int		fd;
-	ssize_t	row;
-	ssize_t	col;
 	char	*line;
+	int		line_count;
 
-	fd = open("maps/wordl1.ber", O_RDONLY);
-	printf("map init function called\n");
+	
+	fd = open("maps/world1.ber", O_RDONLY);
 	if (fd == -1)
+		printf("failed to open map");
+	line_count = count_line(fd);
+	game->map.rows = 0;
+	game->map.cols = 0;
+	game ->map.map = (char **)malloc(sizeof(char *) * (line_count + 1));
+	if (!game ->map.map)
 		return (0);
-
-	row = 0;
-	col = 0;
-	map = (char **)malloc(sizeof(char *) * (count_line(fd) + 1));
-	if (!map)
-		return (0);
-	fd = open("maps/wordl1.ber", O_RDONLY);
+	fd = open("maps/world1.ber", O_RDONLY);
 	while ((line = get_next_line(fd)) != 0)
 	{
-		if (!col)
-			col = ft_strlen(line);
-		map[row] = malloc(col + 1);
-		if (!map[row]) {
+		printf("reading map: %s", line);
+		if (!game -> map.cols)
+			game ->map.cols = ft_strlen(line);
+		game ->map.map[game->map.rows] = malloc(game->map.cols + 1);
+		if (!game ->map.map[game->map.rows]) {
             free(line);
-            break;
+            return (0);
         }
-		ft_strlcpy(map[row], line, col + 1);
+		ft_strlcpy(game ->map.map[game->map.rows], line, game->map.cols + 1);
 		free(line);
-		row++;
+		game->map.rows++;
 	}
-	map[row] = 0;
+	game ->map.map[game->map.rows] = 0;
 	close(fd);
-	render_map(map, row, col, game);
+	
 
-	return (map);
+	return (0);
 	
 }

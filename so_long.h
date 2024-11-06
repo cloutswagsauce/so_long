@@ -2,6 +2,8 @@
 
 #define SO_LONG
 
+
+
 typedef struct mlx_img
 {
 	void	*img;
@@ -20,18 +22,23 @@ typedef struct map_elem
 	void	*img;
 	int		width;
 	int		height;
+	int		pos_x;
+	int		pos_y;
 }			map_elem;
 
 typedef struct t_map
 {
-	char	**map;
-	int		pos_x;
-	int		pos_y;
-	int		width;
-	int		height;
+	char		**map;
+	int			pos_x;
+	int			pos_y;
+	int			width;
+	int			height;
+	int			rows;
+	int			cols;
 	map_elem	wall;
 	map_elem	free_space;
-	int		collectibles;
+	map_elem	collectible;
+	map_elem	exit_space;
 
 }			t_map;
 
@@ -76,7 +83,9 @@ typedef struct mlx_data
 
 int		handle_input(int keysym, mlx_data *data);
 void 	kill_game_free(void *mlx, void *mlx_win);
-char	**map_init();
+char	**map_init(mlx_data *game);
 void	render_map(char	**map, int row, int col, mlx_data *game);
+int		set_window(mlx_data *game);
+int		is_valid(mlx_data *game, int new_x, int new_y);
 
 #endif
