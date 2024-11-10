@@ -6,7 +6,7 @@
 #    By: lfaria-m <lfaria-m@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 18:17:13 by lfaria-m          #+#    #+#              #
-#    Updated: 2024/11/05 19:42:23 by lfaria-m         ###   ########.fr        #
+#    Updated: 2024/11/10 18:44:48 by lfaria-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,14 +14,14 @@
 NAME = so_long
 
 # Source files
-SRCS = main.c handle_input.c map_read_file.c  map_render.c init_game.c
+SRCS = main.c handle_input.c map_read_file.c map_render.c init_game.c validate_map_file.c clean_exit.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)
 
 # Compiler and flags
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address
 MLX_DIR = includes/minilibx
 LIB_DIR = includes/libft
 

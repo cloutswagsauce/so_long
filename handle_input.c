@@ -1,5 +1,6 @@
 #include "so_long.h"
 
+
 int is_valid_move(mlx_data *game, int new_x, int new_y)
 {
     int grid_x = new_x / game->map.wall.width;
@@ -11,48 +12,56 @@ int is_valid_move(mlx_data *game, int new_x, int new_y)
     {
         // Check if the target cell is not a wall
         if (game->map.map[grid_y][grid_x] != '1')
-        {
-            return (1);  // Move is valid
-        }
-    }
-    
+		{
+			if (game->map.map[grid_y][grid_x] == 'C')
+			{
+				game->map.count_collectible++;
+			 	 game->map.map[grid_y][grid_x] = '0';
+			}
+			if (game->map.map[grid_y][grid_x] == 'E')
+			{
+			 	if (game->map.total_collectible_count == game->map.count_collectible)
+					clean_exit(game);
+			}
+			return (1);
+		}
+	}
     return (0);  // Move is invalid (blocked by wall or out of bounds)
 }
 
-
-int handle_input(int keysym, mlx_data *data)
+void wasd(int keysym, mlx_data *data, int *new_x, int *new_y)
 {
-	int new_x = data->player.pos_x;
-	int new_y = data->player.pos_y;
-
-	printf("The key %d was pressed\n", keysym);
-
 	if (keysym == 53) // ESC key
 	{
 		printf("Esc pressed\n");
-		kill_game_free(data->mlx, data->window);
+		clean_exit(data);
 		exit(0);
 	}
 	else if (keysym == 13) // W key
-    	new_y -= 32;
+    	*new_y -= 32;
 	else if (keysym == 0) // A key
-    	new_x -= 32;
+    	*new_x -= 32;
 	else if (keysym == 1) // S key
-    	new_y += 32;
+    	*new_y += 32;
 	else if (keysym == 2) // D key
-    	new_x += 32;
-
-// Update position if the move is valid
-if (is_valid_move(data, new_x, new_y)) {
-    data->player.pos_x = new_x;
-    data->player.pos_y = new_y;
+    	*new_x += 32;
 }
+int handle_input(int keysym, mlx_data *data)
+{
+	int new_x;
+	int new_y;
 
-	// Clear and re-render the map with the updated player position
+	new_x =data->player.pos_x;
+	new_y = data->player.pos_y;
+
+	wasd(keysym, data, &new_x, &new_y);
+	if (is_valid_move(data, new_x, new_y))
+	{
+		data->player.pos_x = new_x;
+		data->player.pos_y = new_y;
+	}
 	mlx_clear_window(data->mlx, data->window);
-	render_map(data->map.map, data->map.rows, data->map.cols, data);
+	render_map(data->map.map, data->map.rows, data->map.cols, data, 0);
 	mlx_put_image_to_window(data->mlx, data->window, data->player.img, data->player.pos_x, data->player.pos_y);
-	
-
 	return (0);
 }

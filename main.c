@@ -1,44 +1,35 @@
 #include "so_long.h"
 
 
-int kill_game_free(void *mlx, void *mlx_win)
+int call_clean_exit(mlx_data *game)
 {
-	mlx_destroy_window(mlx, mlx_win);
-	free(mlx);
-	mlx = 0;
-	mlx_win = 0;
+	clean_exit(game);
 	return (0);
 }
-int handle_close(mlx_data *game)
-{
-    kill_game_free(game->mlx, game->window);
-    exit(0); // Exit the program cleanly
-    return (0);
-}
 
 
-int main(void)
+
+int main(int argc, char **argv)
 {
+	if (argc!= 2)
+	{
+		printf("please provide a valid map");
+		return (1);
+	}
 	mlx_data	game;
 
 	game.mlx = mlx_init();
 	if (!game.mlx)
 		return (1);
-	map_init(&game);
+	game.map.count_collectible = 0;
+	game.map.total_collectible_count = 0;
+	map_init(&game, argv[1]);
 	set_window(&game);
-	render_map(game.map.map, game.map.rows, game.map.rows, &game);
+	render_map(game.map.map, game.map.rows, game.map.cols, &game, 1);
 	
 	mlx_hook(game.window,2, 1L<<0, handle_input, &game);
-	printf("we got here");
-	
-	
+	mlx_hook(game.window, 17, 0, call_clean_exit, &game);
 
-	// Start the event loop
-	mlx_loop(game.mlx);
-	mlx_hook(game.window, 17, 1L << 17, handle_close, &game);
-
-	// Clean up (this won't actually be reached as long as mlx_loop is running)
-	kill_game_free(game.mlx, game.window);
-
+	mlx_loop(&game);
 	return (0);
-}
+	}
