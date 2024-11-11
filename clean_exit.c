@@ -1,5 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   clean_exit.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lfaria-m <lfaria-m@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 13:38:50 by lfaria-m          #+#    #+#             */
+/*   Updated: 2024/11/11 13:40:58 by lfaria-m         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
-void free_map(t_map map)
+
+void	free_map(t_map map)
 {
 	int	i;
 
@@ -7,40 +20,22 @@ void free_map(t_map map)
 	while (i++ < map.rows)
 		free(map.map[i]);
 	free(map.map);
-
 }
-void clean_exit(mlx_data *game)
+
+void	clean_exit(mlx_data *game)
 {
-	if (game->map.wall.img) {
-        mlx_destroy_image(game->mlx, game->map.wall.img);
-        game->map.wall.img = NULL;  // Set to NULL to avoid double-freeing
-    }
-
-    if (game->map.free_space.img) {
-        mlx_destroy_image(game->mlx, game->map.free_space.img);
-        game->map.free_space.img = NULL;
-    }
-
-    if (game->map.collectible.img) {
-        mlx_destroy_image(game->mlx, game->map.collectible.img);
-        game->map.collectible.img = NULL;
-    }
-
-    if (game->map.exit_space.img) {
-        mlx_destroy_image(game->mlx, game->map.exit_space.img);
-        game->map.exit_space.img = NULL;
-    }
-
-    if (game->player.img) {
-        mlx_destroy_image(game->mlx, game->player.img);
-        game->player.img = NULL;
-    }
-
-    if (game->window) {
-        mlx_destroy_window(game->mlx, game->window);
-        game->window = NULL;
-    }
+	mlx_destroy_image(game->mlx, game->map.wall.img);
+	game->map.wall.img = NULL;
+	mlx_destroy_image(game->mlx, game->map.free_space.img);
+	game->map.free_space.img = NULL;
+	mlx_destroy_image(game->mlx, game->map.collectible.img);
+	game->map.collectible.img = NULL;
+	mlx_destroy_image(game->mlx, game->map.exit_space.img);
+	game->map.exit_space.img = NULL;
+	mlx_destroy_image(game->mlx, game->player.img);
+	game->player.img = NULL;
+	mlx_destroy_window(game->mlx, game->window);
+	game->window = NULL;
 	free_map(game->map);
-	mlx_destroy_window(game, game->window);
 	exit(0);
 }

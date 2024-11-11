@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   map_render.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lfaria-m <lfaria-m@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 16:52:07 by lfaria-m          #+#    #+#             */
+/*   Updated: 2024/11/11 16:53:19 by lfaria-m         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
 int	render_map(char	**map, int row, int col, mlx_data *game, int first)
@@ -16,33 +28,37 @@ int	render_map(char	**map, int row, int col, mlx_data *game, int first)
 			x = current_col * game ->map.wall.width;
 			y = current_row * game ->map.wall.height;
 			if (map[current_row][current_col] == '1')
-				mlx_put_image_to_window(game->mlx, game -> window, game -> map.wall.img, x, y);
+				mlx_put_image_to_window(game->mlx, game ->window,
+					game -> map.wall.img, x, y);
 			else if (map[current_row][current_col] == 'P')
 			{
+				mlx_put_image_to_window(game->mlx, game -> window,
+					game -> map.free_space.img, x, y);
 				if (first == 1)
 				{
 					game->player.pos_x = x;
 					game->player.pos_y = y;
-					mlx_put_image_to_window(game->mlx, game -> window, game -> player.img, x , y);
-					printf("bro spawned");
+					mlx_put_image_to_window(game->mlx, game -> window,
+						game -> player.img, game->player.pos_x , game->player.pos_y);
 				}
-
-				mlx_put_image_to_window(game->mlx, game -> window, game -> map.free_space.img, x, y);
 			}
 			else if (map[current_row][current_col] == '0')
-				mlx_put_image_to_window(game->mlx, game -> window, game -> map.free_space.img, x, y);
+				mlx_put_image_to_window(game->mlx, game -> window,
+					game -> map.free_space.img, x, y);
 			else if (map[current_row][current_col] == 'C')
 			{
-				mlx_put_image_to_window(game->mlx, game -> window, game -> map.free_space.img, x, y);
-				mlx_put_image_to_window(game->mlx, game -> window, game -> map.collectible.img, x, y);
+				mlx_put_image_to_window(game->mlx, game -> window,
+					game -> map.free_space.img, x, y);
+				mlx_put_image_to_window(game->mlx, game -> window,
+					game -> map.collectible.img, x, y);
 			}
 			else if (map[current_row][current_col] == 'E')
 			{
-				mlx_put_image_to_window(game->mlx, game -> window, game -> map.free_space.img, x, y);
-				mlx_put_image_to_window(game->mlx, game -> window, game -> map.exit_space.img, x, y);
+				mlx_put_image_to_window(game->mlx, game -> window,
+					game -> map.free_space.img, x, y);
+				mlx_put_image_to_window(game->mlx, game -> window,
+					game -> map.exit_space.img, x, y);
 			}
-			
-				
 			current_col++;
 		}
 		current_row++;

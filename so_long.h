@@ -1,8 +1,28 @@
-#ifndef SO_LONG
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   so_long.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lfaria-m <lfaria-m@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 17:00:19 by lfaria-m          #+#    #+#             */
+/*   Updated: 2024/11/11 17:02:44 by lfaria-m         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#define SO_LONG
+#ifndef SO_LONG_H
+# define SO_LONG_H
 
+#define IMG_S 32
 
+#include "includes/minilibx/mlx.h"
+#include "includes/libft/libft.h"
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
 
 typedef struct mlx_img
 {
@@ -70,25 +90,12 @@ typedef struct mlx_data
 	
 }			mlx_data;
 
-#define IMG_S 32
-
-
-
-#include "includes/minilibx/mlx.h"
-#include "includes/libft/libft.h"
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
-
 int		handle_input(int keysym, mlx_data *data);
 char	**map_init(mlx_data *game, char *map_name);
 int		render_map(char	**map, int row, int col, mlx_data *game, int flag);
 int		set_window(mlx_data *game);
 int		is_valid_move(mlx_data *game, int new_x, int new_y);
-int 	validate_map(t_map *game);
+int		validate_map(t_map *game);
 void	clean_exit(mlx_data *game);
 
 #endif
