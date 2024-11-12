@@ -1,20 +1,20 @@
-# **************************************************************************** #
+#******************************************************************************#
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lfaria-m <lfaria-m@student.42.fr>          +#+  +:+       +#+         #
+#    By: lfaria-m <lfaria-m@42lausanne.ch>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 18:17:13 by lfaria-m          #+#    #+#              #
-#    Updated: 2024/11/10 18:44:48 by lfaria-m         ###   ########.fr        #
+#    Updated: 2024/11/12 17:06:39 by lfaria-m         ###   ########.fr        #
 #                                                                              #
-# **************************************************************************** #
+#******************************************************************************#
 
 # Program name
 NAME = so_long
 
 # Source files
-SRCS = main.c handle_input.c map_read_file.c map_render.c init_game.c validate_map_file.c clean_exit.c
+SRCS = main.c handle_input.c map_read_file.c map_render.c init_game.c validate_map_file.c clean_exit.c validate_map_helper.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)
@@ -37,11 +37,12 @@ MLX_FLAGS = -L $(MLX_DIR) -lmlx -framework OpenGL -framework AppKit
 
 LIB_FLAGS = -L $(LIB_DIR) -lft
 
+
 # Rule to build the executable
 all: $(NAME)
 
 # Linking the executable
-$(NAME): $(OBJS) $(MLX) $(LIB)
+$(NAME): $(OBJS) $(MLX) $(LIB) $(PRTF)
 	$(CC) $(CFLAGS) $(OBJS) $(MLX_FLAGS) $(LIB_FLAGS) -o $(NAME)
 
 # Compile source files into object files
@@ -64,7 +65,7 @@ clean:
 # Clean everything
 fclean: clean
 	$(RM) $(NAME)
-	make -C $(MLX_DIR) fclean
+	make -C $(MLX_DIR) clean
 	make -C $(LIB_DIR) fclean
 
 # Rebuild everything

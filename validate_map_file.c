@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   validate_map_file.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lfaria-m <lfaria-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lfaria-m <lfaria-m@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/11 15:24:45 by lfaria-m          #+#    #+#             */
-/*   Updated: 2024/11/11 16:37:22 by lfaria-m         ###   ########.fr       */
+/*   Created: 2024/11/12 10:14:26 by lfaria-m          #+#    #+#             */
+/*   Updated: 2024/11/12 16:32:29 by lfaria-m         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "so_long.h"
 #include <stdio.h>
@@ -25,22 +25,12 @@ int	validate_map_characters(t_map *map, int *countE, int *countC, int *countP)
 	*countP = 0;
 	i = 0;
 	while (i < map->rows)
-	{	
+	{
 		j = 0;
 		while (j < map->cols)
 		{
 			c = map->map[i][j];
-			if (c == 'E')
-				(*countE)++;
-			else if (c == 'C')
-				(*countC)++;
-			else if (c == 'P')
-				(*countP)++;
-			else if (c != '0' && c != '1')
-			{
-				printf("Error\nInvalid character '%c' in map\n", c);
-				return (0);
-			}
+			increment_count(c, countE, countC, countP);
 			j ++;
 		}
 		i++;
@@ -48,82 +38,7 @@ int	validate_map_characters(t_map *map, int *countE, int *countC, int *countP)
 	return (1);
 }
 
-int	is_rectangular(t_map *map)
-{
-	int	i;
-	int	len;
-
-	if (!map->map[0])
-		return (0);
-	len = strlen(map->map[0]);
-	i = 1;
-	while (i < map->rows)
-	{
-		if (!map->map[i] || (int)strlen(map->map[i]) != len)
-		{
-			printf("Error\nMap is not rectangular\n");
-			return (0);
-		}
-		i++;
-	}
-	map->cols = len;
-	return (1);
-}
-
-int	is_surrounded_by_walls(t_map *map)
-{
-	int	i;
-	int	j;
-
-	j = 0;
-	while (j < map->cols)
-	{
-		if (map->map[0][j] != '1' || map->map[map->rows - 1][j] != '1')
-		{
-			printf("Error\nMap is not surrounded by walls (top/bottom row)\n");
-			return (0);
-		}
-		j++;
-	}
-	i = 0;
-	while (i < map->rows)
-	{
-		if (map->map[i][0] != '1' || map->map[i][map->cols - 1] != '1')
-		{
-			printf("Error\nMap is not surrounded by walls (left/right column)\n");
-			return (0);
-		}
-		i++;
-	}
-	return (1);
-}
-
-int	find_start_position(t_map *map, int *start_x, int *start_y)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (i < map->rows)
-	{
-		j = 0;
-		while (j < map->cols)
-		{
-			if (map->map[i][j] == 'P')
-			{
-				*start_x = i;
-				*start_y = j;
-				return (1);
-			}
-			j++;
-		}
-		i++;
-	}
-	printf("Error\nStarting point 'P' not found in the map\n");
-	return (0);
-}
-
-void	flood_fill(t_map *map, int x, int y, int visited[map->rows][map->cols])
+void	flood_fill(t_map *map, int x, int y, int **visited)
 {
 	if (x < 0 || x >= map->rows || y < 0 || y >= map->cols)
 		return ;
@@ -138,44 +53,52 @@ void	flood_fill(t_map *map, int x, int y, int visited[map->rows][map->cols])
 	flood_fill(map, x, y - 1, visited);
 }
 
+int	**allocate_mem(int rows, int cols)
+{
+	int	**temp;
+	int	i;
+
+	temp = (int **)malloc(sizeof(int *) * rows);
+	if (!temp)
+		return (0);
+	i = 0;
+	while (i < rows)
+	{
+		temp[i] = (int *)malloc(sizeof(int) * cols);
+		if (!temp[i])
+		{
+			while (i > 0)
+				free(temp[--i]);
+			free(temp);
+			return (0);
+		}
+		i++;
+	}
+	return (temp);
+}
+
 int	check_valid_path(t_map *map)
 {
 	int	start_x;
 	int	start_y;
 	int	i;
 	int	j;
-	int	visited[map->rows][map->cols];
+	int	**visited;
 
 	if (!find_start_position(map, &start_x, &start_y))
 		return (0);
 	i = 0;
+	visited = allocate_mem(map->rows, map->cols);
 	while (i < map->rows)
 	{
 		j = 0;
 		while (j < map->cols)
-		{
-			visited[i][j] = 0;
-			j++;
-		}
+			visited[i][j++] = 0;
 		i++;
 	}
 	flood_fill(map, start_x, start_y, visited);
-	i = 0;
-	while (i < map->rows)
-	{
-		j = 0;
-		while (j < map->cols)
-		{
-			if ((map->map[i][j] == 'C' || map->map[i][j] == 'E')
-			&& !visited[i][j])
-			{
-				printf("Error\nNot all collectibles and exits are reachable\n");
-				return (0);
-			}
-			j++;
-		}
-		i++;
-	}
+	if (!all_reachable(map, visited, i, j))
+		return (0);
 	return (1);
 }
 
@@ -189,21 +112,8 @@ int	validate_map(t_map *map)
 		return (0);
 	if (!validate_map_characters(map, &count_e, &count_c, &count_p))
 		return (0);
-	if (count_e != 1)
-	{
-		printf("Error\nThere must be exactly one exit 'E'\n");
+	if (!handle_valid_map_error(count_e, count_c, count_p))
 		return (0);
-	}
-	if (count_p != 1)
-	{
-		printf("Error\nThere must be exactly one player start 'P'\n");
-		return (0);
-	}
-	if (count_c < 1)
-	{
-		printf("Error\nThere must be at least one collectible 'C'\n");
-		return (0);
-	}
 	if (!is_surrounded_by_walls(map))
 		return (0);
 	if (!check_valid_path(map))
